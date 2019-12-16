@@ -18,13 +18,20 @@ r = requests.get(url)
 #Parse Posts
 pattern = r"\d+.Posts"
 result = re.search(pattern, r.text)
-posts = int(re.findall('\d+',result.group())[0])
-print("posts:",posts)
-
+try:
+	posts = int(re.findall('\d+',result.group())[0])
+except:
+	print("Account does not exist")
+	exit(1)
 
 #Parse userid
 pattern = r"owner.:\D+\d+"
 result = re.search(pattern, r.text)
-user_id = int(re.findall('\d+',result.group())[0])
+try:
+	user_id = int(re.findall('\d+',result.group())[0])
+except:
+	print("Private account")
+	exit(1)
+	
+print("posts:",posts)
 print("userid:",user_id)
-
