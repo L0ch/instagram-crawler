@@ -12,28 +12,47 @@ import sys
 # first - Post count by once request
 posts = 455
 user_id = str(1692800026)
-first = 12
+first = 50
+shortcodes = []
 
+query_hash = 'e769aa130647d2354c40ea6a439bfc08' #fixed
+base_url = 'https://www.instagram.com/'
 
-query_hash = "e769aa130647d2354c40ea6a439bfc08" #fixed
-base_url = "https://www.instagram.com/"	
-url = base_url+"graphql/query/?query_hash="+query_hash+"&variables={\"id\":\""+user_id+"\","  # GET param : query_hash, variables{id, first, after}
+# Get json from graphql API 
+url = base_url+'graphql/query/?query_hash='+query_hash+'&variables={"id":"'+user_id+'",'  # GET param : query_hash, variables{id, first, after}
 
 
 # Total posts / Post count by once request
 req_cnt = int(posts/first) + bool(posts%first)
 
-# Get next posts
-end_cursor = ""
-for i in range(0,req_cnt):
-	d = url + "\"first\":"+str(first)+",\"after\":\""+end_cursor+"\"}"
-	r = requests.get(d)
-	print(d)
 
+
+
+# Get next posts
+end_cursor = ''
+for i in range(0,req_cnt):
+	req_url = url + '"first":'+str(first)+',"after":"'+end_cursor+'"}'
+	r = requests.get(req_url)
+	
+	print(req_url)
 	# Get end_cursor for next requests
-	pattern = "end_cursor\":\"\w+=="
-	result = re.search(pattern, r.text)
-	end_cursor = result.group().split('":"')[1]
+	p = re.compile(r'end_cursor":"\w+==')
+	
+	end_cursor = p.search(r.text)
+	if(end_cursor): # end_cursor = null
+		end_cursor = end_cursor.group().split('":"')[1]
+		
+	# Get each post shortcode
+	p = re.compile(r'"shortcode":".{20}')
+	shortcodes += p.findall(r.text)
+	
+	
+	print(len(shortcodes),"/",posts)
+
+# Filter 
+for j in range(0,posts):
+	shortcodes[j] = shortcodes[j].split('":"')[1].split('"')[0]
+	print(shortcodes[j])
 	
 	
 
