@@ -1,8 +1,9 @@
 #-*- coding:utf-8 -*-
-# 인자1 : username
+# parameter1 : posts
+# parameter2 : user_id
 
+# return : shortcode(list)
 
-from bs4 import BeautifulSoup
 import requests
 import re
 import sys
@@ -13,7 +14,7 @@ import sys
 posts = 455
 user_id = str(1692800026)
 first = 50
-shortcodes = []
+shortcode = []
 
 query_hash = 'e769aa130647d2354c40ea6a439bfc08' #fixed
 base_url = 'https://www.instagram.com/'
@@ -28,31 +29,33 @@ req_cnt = int(posts/first) + bool(posts%first)
 
 
 
-# Get next posts
+# Get json
 end_cursor = ''
 for i in range(0,req_cnt):
 	req_url = url + '"first":'+str(first)+',"after":"'+end_cursor+'"}'
 	r = requests.get(req_url)
 	
 	print(req_url)
-	# Get end_cursor for next requests
-	p = re.compile(r'end_cursor":"\w+==')
+	json = r.text.replace(',',',\n')
 	
-	end_cursor = p.search(r.text)
-	if(end_cursor): # end_cursor = null
+	# Get end_cursor for next requests
+	p = re.compile(r'"end_cursor":".+==')
+	end_cursor = p.search(json)
+	
+	if(end_cursor):
 		end_cursor = end_cursor.group().split('":"')[1]
 		
 	# Get each post shortcode
-	p = re.compile(r'"shortcode":".{20}')
-	shortcodes += p.findall(r.text)
+	p = re.compile(r'"shortcode":".+"')
+	shortcode += p.findall(json)
 	
 	
-	print(len(shortcodes),"/",posts)
+	print(len(shortcode),"/",posts)
 
-# Filter 
+# split
 for j in range(0,posts):
-	shortcodes[j] = shortcodes[j].split('":"')[1].split('"')[0]
-	print(shortcodes[j])
+	shortcode[j] = shortcode[j].split('"')[3]
+	print(shortcode[j])
 	
 	
 
