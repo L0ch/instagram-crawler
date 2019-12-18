@@ -1,4 +1,3 @@
-#-*- coding:utf-8 -*-
 # parameter1 : posts
 # parameter2 : user_id
 
