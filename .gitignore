@@ -1,4 +1,5 @@
 goorm.manifest
 __pycache__/
+*.pyc
 
 

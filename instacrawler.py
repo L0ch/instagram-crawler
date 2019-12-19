@@ -1,5 +1,5 @@
-import fetch
-import getfile
+from lib import fetch
+from lib import getfile
 import sys
 
 
@@ -19,8 +19,6 @@ def main():
 	
 	print(shortcode)
 	
-	
-
 
 if __name__ == "__main__":
 	main()
