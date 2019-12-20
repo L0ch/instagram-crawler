@@ -1,10 +1,13 @@
 from lib import fetch
 from lib import getfile
 import sys
+import os
+import time
+
 
 
 def main():
-
+	start = time.time()
 	try:
 		user_name = sys.argv[1]
 	except:
@@ -17,8 +20,18 @@ def main():
 	
 	shortcode = fetch.shortcode(str(user_id), posts)
 	
-	print(shortcode)
 	
+	img_url, video_url = getfile.source(shortcode)
+	
+	print(len(img_url))
+	print(len(video_url))
+	
+	
+	getfile.download(img_url)
+	getfile.download(video_url)
+	
+	
+	print("time :", time.time() - start)
 
 if __name__ == "__main__":
 	main()
