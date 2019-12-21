@@ -4,6 +4,7 @@ import sys
 import os
 import time
 
+#not : 14s 
 
 
 def main():
@@ -13,6 +14,7 @@ def main():
 	except:
 		print("Usage : python3",sys.argv[0],"[username]")
 		return 0
+	
 	
 	user_info = fetch.profile(user_name) 
 	user_id = user_info[0]
@@ -26,9 +28,13 @@ def main():
 	print(len(img_url))
 	print(len(video_url))
 	
-	
-	getfile.download(img_url)
-	getfile.download(video_url)
+	if sys.argv[2] == "-img":
+		getfile.download(img_url)
+	elif sys.argv[2] == "-video":
+		getfile.download(video_url)
+	else:
+		getfile.download(img_url)
+		getfile.download(video_url)
 	
 	
 	print("time :", time.time() - start)
