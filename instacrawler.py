@@ -5,10 +5,8 @@ import os
 import time
 import argparse
 
-	
 
 def main():
-	
 	start = time.time()
 	
 	target_help = "Instagram user's name"	
@@ -16,49 +14,51 @@ def main():
 	
 	parser = argparse.ArgumentParser(description="Instagram media crawler by dw0rdptr")
 	parser.add_argument("--target", required=True, help=target_help)
-	
-	parser.add_argument("--op", required=False, default = "all", choices = ["all", "img", 
-"video"], help=op_help)
-	
+	parser.add_argument("--op", required=False, default = "all", choices = ["all", "img", "video"], help=op_help)
 	args = parser.parse_args()
 	
 	target = args.target
 	op = args.op
 	
-	print(target)
-	if op=="all":
-		print("all")
-	elif op=="img":
-		print("img")
-	elif op=="video":
-		print("video")
+	# Make result directory
+	if not os.path.isdir(target):
+		os.mkdir(target)
 	
 	
-	
-	user_info = fetch.profile(user_name) 
+	user_info = fetch.profile(target) 
 	user_id = user_info[0]
-	posts = user_info[1]
+	post_cnt = user_info[1]
 	
 	
 	print("user_id :", user_id)
-	print("Total post :", posts,'\n')
+	print("Total post :", post_cnt,'\n')
 	
 	time.sleep(2)
 	
 	print("Get post urls...")
-	shortcode = fetch.shortcode(str(user_id), posts)
-	print(len(shortcode), "posts load Complete.\n")
+	shortcodes = fetch.shortcode(str(user_id), post_cnt)
+	print(len(shortcodes), "post_cnt load Complete.\n")
 	time.sleep(2)
 	
 	print("Get media source urls...")
-	img_url, video_url = getfile.source(shortcode)
-	print(len(img_url), "images,", len(video_url), "videos.\n")
+	img_urls, video_urls = getfile.source(shortcodes)
+	print(len(img_urls), "images,", len(video_urls), "videos.\n")
 	time.sleep(2)
+
 	
-	print("downloading images...")
-	getfile.download(img_url)
-	print("\ndownloading videos...")
-	getfile.download(video_url)
+	if op=="all":
+		print("downloading images...")
+		getfile.download(img_urls, target)
+		print("downloading videos...")
+		getfile.download(video_urls, target)
+	elif op=="img":
+		print("downloading images...")
+		getfile.download(img_urls, target)
+	elif op=="video":
+		print("downloading videos...")
+		getfile.download(video_urls, target)
+	
+	
 	
 	
 	print("time :", time.time() - start)

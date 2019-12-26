@@ -32,26 +32,26 @@ async def get_media_url(shortcode, img_urls, video_urls):
 
 			
 			
-async def download_media(url, limit):
+async def download_media(url, target, limit):
 	pattern = r'\d+_\d+_\d+.+\?'
 	file_name = re.search(pattern, url).group().replace('?','')
 	
 	# Write to file
 	async with aiohttp.ClientSession() as session, limit:
 		async with session.get(url) as res:
-			async with aiofiles.open('result/'+file_name, 'wb') as file:
+			async with aiofiles.open(target+'/'+file_name, 'wb') as file:
 				await file.write(await res.read())
 				await file.close()
 		
 		
 			
 # Parameter : image/video url list
-def download(urls):
+def download(urls, target):
 	# Set limit read/write to file
 	limit = asyncio.Semaphore(10)
 	# Asynchronous call
 	# Download image/video 
-	tasks = [download_media(url, limit) for url in urls]
+	tasks = [download_media(url, target, limit) for url in urls]
 	loop = asyncio.get_event_loop()
 	loop.run_until_complete(asyncio.wait(tasks))
 

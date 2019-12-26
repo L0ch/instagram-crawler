@@ -14,17 +14,17 @@ def profile(user_name):
 	url = base_url+user_name+contry_code
 	r = requests.get(url)
 
-	#Parse Total Posts
+	#Parse Total post count
 	pattern = r'"edge_owner_to_timeline_media":{"count":\d+,'
 	result = re.search(pattern, r.text)
 	try:
-		posts = int(result.group().split('"count":')[1].replace(',',''))
+		post_cnt = int(result.group().split('"count":')[1].replace(',',''))
 		
 	except:
 		print("Account does not exist")
 		exit(1)
 
-	if posts == 0:
+	if post_cnt == 0:
 		print("Post does not exist, nothing to download")
 		exit(1)
 	
@@ -37,20 +37,20 @@ def profile(user_name):
 		print("Cannot access private account")
 		exit(1)
 	
-	return user_id, posts
+	return user_id, post_cnt
 	
 
 ################################################################
 # parameter1 : userid
-# parameter2 : posts
+# parameter2 : post_cnt
 
 # return : shortcode(list)
 
-def shortcode(user_id, posts):
+def shortcode(user_id, post_cnt):
 	
 	
 	first = 50			#Post count by once request
-	shortcode = []
+	shortcodes = []
 
 	query_hash = 'e769aa130647d2354c40ea6a439bfc08' #fixed
 	base_url = 'https://www.instagram.com/'
@@ -60,8 +60,8 @@ def shortcode(user_id, posts):
 	url = base_url+'graphql/query/?query_hash='+query_hash+'&variables={"id":"'+user_id+'",'  
 
 
-	# Total posts / Post count by once request
-	req_cnt = int(posts/first) + bool(posts%first)
+	# Total post_cnt / Post count by once request
+	req_cnt = int(post_cnt/first) + bool(post_cnt%first)
 
 	# Get json
 	end_cursor = ''
@@ -76,23 +76,22 @@ def shortcode(user_id, posts):
 		p = re.compile(r'"end_cursor":".+==')
 		end_cursor = p.search(json)
 	
-		if(end_cursor):
+		if end_cursor:
 			end_cursor = end_cursor.group().split('":"')[1]
 			
 		# Get each post shortcode
 		p = re.compile(r'"shortcode":".+"')
-		shortcode += p.findall(json)
+		shortcodes += p.findall(json)
 	
-	
-	#print(len(shortcode),"/",posts)
+
 
 	# split
-	for j in range(0,len(shortcode)):
-		shortcode[j] = shortcode[j].split('"')[3]
+	for j in range(0,len(shortcodes)):
+		shortcodes[j] = shortcodes[j].split('"')[3]
 	
-	print(len(shortcode))
+	print(len(shortcodes))
 	
-	return shortcode
+	return shortcodes
 
 		
 		
