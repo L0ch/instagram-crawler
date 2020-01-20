@@ -7,6 +7,12 @@ import sys
 from tqdm import tqdm
 from tqdm import trange
 
+
+def hashtag(tag_name):
+	bas_url = "https://www.instagram.com/explore/tags/"
+	
+
+
 def profile(user_name):
 	base_url = "https://www.instagram.com/"
 	contry_code = "/?hl=en"
