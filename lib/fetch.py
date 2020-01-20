@@ -15,9 +15,9 @@ def hashtag(tag_name):
 
 def profile(user_name):
 	base_url = "https://www.instagram.com/"
-	contry_code = "/?hl=en"
+	country_code = "/?hl=en"
 	
-	url = base_url+user_name+contry_code
+	url = base_url+user_name+country_code
 	r = requests.get(url)
 
 	#Parse Total post count
